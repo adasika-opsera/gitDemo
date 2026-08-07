@@ -1,0 +1,17 @@
+{
+  "assets": [
+    {
+      "name": "main.pass.js",
+      "entry": "main"
+    },
+    {
+      "name": "admin.fail.js",
+      "entry": "admin"
+    },
+    {
+      "name": "pages.pass.js",
+      "entry": "pages"
+    }
+  ],
+  "chunkCount": 3
+}

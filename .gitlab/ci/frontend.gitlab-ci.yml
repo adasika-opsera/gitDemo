@@ -145,6 +145,81 @@ size-budget-fixture-fail:
   rules:
     - if: $CI_PIPELINE_SOURCE
 
+runtime-smoke:
+  extends: .frontend-test-base
+  stage: test
+  needs:
+    - job: build-webpack
+      artifacts: true
+    - job: build-rspack
+      artifacts: true
+    - job: bundle-parity
+      artifacts: true
+  script:
+    - source scripts/utils.sh
+    - log_info "Running runtime smoke suite against webpack and Rspack outputs"
+    - |
+      node scripts/frontend/smoke_entry_points.mjs \
+        --asset-root dist/webpack \
+        --bundler webpack4 \
+        --output reports/parity/smoke-results-webpack4.json
+    - |
+      node scripts/frontend/smoke_entry_points.mjs \
+        --asset-root dist/rspack \
+        --bundler rspack \
+        --output reports/parity/smoke-results-rspack.json
+    - |
+      node scripts/frontend/smoke_entry_points.mjs \
+        --mode diff \
+        --results-a reports/parity/smoke-results-webpack4.json \
+        --results-b reports/parity/smoke-results-rspack.json \
+        --reports-dir reports/parity \
+        --parity-defects reports/parity/parity-defects.json
+  artifacts:
+    name: runtime-smoke-reports
+    paths:
+      - reports/parity/smoke-results-webpack4.json
+      - reports/parity/smoke-results-rspack.json
+      - reports/parity/smoke-divergence-report.json
+      - reports/parity/parity-defects.json
+    expire_in: 31d
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+runtime-smoke-fixtures:
+  extends: .frontend-test-base
+  stage: test
+  script:
+    - source scripts/utils.sh
+    - log_info "Validating smoke harness against committed passing and failing fixtures"
+    - |
+      node scripts/frontend/smoke_entry_points.mjs \
+        --asset-root fixtures/frontend/smoke/passing \
+        --bundler fixture-pass \
+        --output reports/parity/smoke-results-fixture-pass.json
+    - |
+      set +e
+      node scripts/frontend/smoke_entry_points.mjs \
+        --asset-root fixtures/frontend/smoke/failing \
+        --bundler fixture-fail \
+        --output reports/parity/smoke-results-fixture-fail.json
+      exit_code=$?
+      set -e
+      if [ "$exit_code" -ne 1 ]; then
+        log_error "Expected smoke harness to exit 1 for failing fixture, got $exit_code"
+        exit 1
+      fi
+      log_info "Smoke harness correctly failed on failing fixture"
+  artifacts:
+    name: runtime-smoke-fixture-reports
+    paths:
+      - reports/parity/smoke-results-fixture-pass.json
+      - reports/parity/smoke-results-fixture-fail.json
+    expire_in: 31d
+    when: always
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
 frontend-unit-tests:
   extends: .frontend-test-base
   stage: test
