@@ -5,7 +5,7 @@ const path = require('path');
 const { getProductionEntryPointNames } = require('./getProductionEntryPoints');
 
 /** Matches webpack contenthash segments in emitted asset names. */
-const CONTENT_HASH_PATTERN = /\.([a-f0-9]{8})(?=\.(js|css|map)$)/gi;
+const CONTENT_HASH_PATTERN = /\.([a-f0-9]{8})(?=\.(chunk\.)?(js|css|map)$)/gi;
 
 /**
  * Strip content hashes from an asset name, preserving the logical name.
@@ -22,7 +22,9 @@ function stripContentHash(assetName) {
  * @returns {string}
  */
 function detectHashedNameStrategy(assetNames) {
-  const hasContentHash = assetNames.some((name) => /\.[a-f0-9]{8}\.(js|css|map)$/.test(name));
+  const hasContentHash = assetNames.some((name) =>
+    /\.[a-f0-9]{8}\.(chunk\.)?(js|css|map)$/.test(name),
+  );
   return hasContentHash ? '[name].[contenthash:8].js' : '[name].js';
 }
 

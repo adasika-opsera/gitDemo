@@ -1,0 +1,4 @@
+# Accepted bundle parity divergences.
+# Each entry must include asset, kind, reason, and issue.
+# An empty allowlist is the Phase 3 exit condition.
+entries: []

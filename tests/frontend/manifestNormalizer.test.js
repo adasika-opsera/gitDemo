@@ -31,6 +31,7 @@ describe('manifestNormalizer', () => {
     it('normalises assets with identical logical names but different hashes to the same key', () => {
       expect(stripContentHash('main.a1b2c3d4.js')).toBe('main.js');
       expect(stripContentHash('main.deadbeef.js')).toBe('main.js');
+      expect(stripContentHash('lazy.f1e2d3c4.chunk.js')).toBe('lazy.chunk.js');
     });
 
     it('leaves unhashed names unchanged', () => {

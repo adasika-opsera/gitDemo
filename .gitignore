@@ -1,4 +1,5 @@
 node_modules/
 dist/
+reports/parity/
 config/parity/webpack4-baseline.rerun.json
 *.log

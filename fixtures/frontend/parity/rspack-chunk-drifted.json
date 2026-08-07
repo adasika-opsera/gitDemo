@@ -1,0 +1,9 @@
+{
+  "assets": [
+    { "name": "admin.c3d4e5f6.js", "entry": "admin" },
+    { "name": "lazy.f1e2d3c4.chunk.js", "entry": "pages" },
+    { "name": "main.a1b2c3d4.js", "entry": "main" },
+    { "name": "pages.e5f6a7b8.js", "entry": "pages" }
+  ],
+  "chunkCount": 4
+}

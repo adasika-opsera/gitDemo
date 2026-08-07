@@ -1,0 +1,8 @@
+{
+  "assets": [
+    { "name": "admin.js", "entry": "admin" },
+    { "name": "main.js", "entry": "main" },
+    { "name": "pages.js", "entry": "pages" }
+  ],
+  "chunkCount": 3
+}

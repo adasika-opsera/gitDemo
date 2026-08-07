@@ -1,0 +1,11 @@
+# Assets included in byte-level digest comparison.
+# Defaults to production entry chunks when empty.
+assets:
+  - main.js
+  - pages.js
+  - admin.js
+
+# Patterns excluded from byte comparison (sourcemaps, compression variants).
+excludePatterns:
+  - '\.map$'
+  - '\.(gz|br)$'
