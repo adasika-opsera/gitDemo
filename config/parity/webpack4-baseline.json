@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-08-07T20:59:14.884Z",
+  "gitSha": "3908dbea76c27aa83081cf8adcc58c006ad57c9d",
+  "bundler": "webpack4",
+  "wallClockSeconds": {
+    "cold": 1.26,
+    "warm": 1.279
+  },
+  "hashedNameStrategy": "[name].[contenthash:8].js",
+  "chunkCount": 3,
+  "entryPoints": [
+    {
+      "name": "admin",
+      "assetCount": 1,
+      "totalBytes": 959,
+      "assets": [
+        {
+          "name": "admin.efaeb0cb.js",
+          "logicalName": "admin.js",
+          "bytes": 959,
+          "gzipBytes": null
+        }
+      ]
+    },
+    {
+      "name": "dev_tools",
+      "assetCount": 0,
+      "totalBytes": 0,
+      "assets": []
+    },
+    {
+      "name": "main",
+      "assetCount": 1,
+      "totalBytes": 956,
+      "assets": [
+        {
+          "name": "main.9e808dff.js",
+          "logicalName": "main.js",
+          "bytes": 956,
+          "gzipBytes": null
+        }
+      ]
+    },
+    {
+      "name": "pages",
+      "assetCount": 1,
+      "totalBytes": 958,
+      "assets": [
+        {
+          "name": "pages.a5d9d95b.js",
+          "logicalName": "pages.js",
+          "bytes": 958,
+          "gzipBytes": null
+        }
+      ]
+    }
+  ],
+  "assets": [
+    {
+      "name": "admin.efaeb0cb.js",
+      "logicalName": "admin.js",
+      "entry": "admin",
+      "bytes": 959,
+      "gzipBytes": null
+    },
+    {
+      "name": "main.9e808dff.js",
+      "logicalName": "main.js",
+      "entry": "main",
+      "bytes": 956,
+      "gzipBytes": null
+    },
+    {
+      "name": "pages.a5d9d95b.js",
+      "logicalName": "pages.js",
+      "entry": "pages",
+      "bytes": 958,
+      "gzipBytes": null
+    }
+  ],
+  "entryByteTotals": {
+    "admin": 959,
+    "main": 956,
+    "pages": 958
+  }
+}

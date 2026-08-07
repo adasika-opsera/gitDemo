@@ -1,0 +1,7 @@
+{
+  "assets": [
+    { "name": "main.a1b2c3d4.js", "entry": "main" },
+    { "name": "pages.e5f6a7b8.js", "entry": "pages" }
+  ],
+  "chunkCount": 2
+}

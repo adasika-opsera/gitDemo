@@ -1,0 +1,4 @@
+node_modules/
+dist/
+config/parity/webpack4-baseline.rerun.json
+*.log

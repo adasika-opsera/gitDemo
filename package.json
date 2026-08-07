@@ -1,0 +1,25 @@
+{
+  "name": "gitdemo-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Demo frontend build baseline tooling for webpack 4 parity (WO-001)",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "build": "NODE_ENV=production webpack --config config/webpack.config.js",
+    "build:rspack": "echo 'Rspack build requires ENABLE_RSPACK=true (not implemented in demo)' && exit 1",
+    "record-baseline": "node scripts/frontend/record_build_baseline.mjs",
+    "validate-baseline": "node scripts/frontend/validate_baseline.mjs",
+    "test": "jest",
+    "test:baseline": "jest tests/frontend/manifestNormalizer.test.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "jest": "^29.7.0",
+    "webpack": "^4.47.0",
+    "webpack-cli": "^4.10.0"
+  }
+}

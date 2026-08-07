@@ -1,0 +1,100 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://gitlab.example.com/schemas/webpack4-baseline.schema.json",
+  "title": "Webpack 4 Build Baseline",
+  "description": "Structured baseline for webpack 4 production build parity comparisons (WO-001).",
+  "type": "object",
+  "required": [
+    "generatedAt",
+    "gitSha",
+    "bundler",
+    "wallClockSeconds",
+    "hashedNameStrategy",
+    "chunkCount",
+    "entryPoints",
+    "assets",
+    "entryByteTotals"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "gitSha": {
+      "type": "string",
+      "minLength": 1
+    },
+    "bundler": {
+      "type": "string",
+      "enum": ["webpack4"]
+    },
+    "wallClockSeconds": {
+      "type": "object",
+      "required": ["cold", "warm"],
+      "additionalProperties": false,
+      "properties": {
+        "cold": { "type": "number", "minimum": 0 },
+        "warm": { "type": "number", "minimum": 0 }
+      }
+    },
+    "hashedNameStrategy": {
+      "type": "string",
+      "minLength": 1
+    },
+    "chunkCount": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "entryPoints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "assetCount", "totalBytes", "assets"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "assetCount": { "type": "integer", "minimum": 0 },
+          "totalBytes": { "type": "integer", "minimum": 0 },
+          "assets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "logicalName", "bytes"],
+              "additionalProperties": false,
+              "properties": {
+                "name": { "type": "string" },
+                "logicalName": { "type": "string" },
+                "bytes": { "type": "integer", "minimum": 0 },
+                "gzipBytes": { "type": ["integer", "null"], "minimum": 0 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "logicalName", "entry", "bytes"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string" },
+          "logicalName": { "type": "string" },
+          "entry": { "type": "string" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "gzipBytes": { "type": ["integer", "null"], "minimum": 0 }
+        }
+      }
+    },
+    "entryByteTotals": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    }
+  }
+}
