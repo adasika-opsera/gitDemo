@@ -1,0 +1,18 @@
+# Rebaseline audit log for config/parity/webpack4-baseline.json (WO-003).
+#
+# The originalEntryByteTotals block is the immutable WO-001 snapshot.
+# Any committed change to entryByteTotals in webpack4-baseline.json MUST
+# append a corresponding entry below documenting the reason and issue reference.
+#
+# Re-baselining process:
+#   1. Update config/parity/webpack4-baseline.json entryByteTotals for the entry.
+#   2. Append an entry here with entry, previousBytes, newBytes, reason, issue.
+#   3. Open a merge request; the size-budget CI job validates the pairing.
+
+originalEntryByteTotals:
+  admin: 959
+  main: 956
+  pages: 958
+  dev_tools: 0
+
+entries: []

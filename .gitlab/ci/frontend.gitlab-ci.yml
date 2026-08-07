@@ -1,4 +1,4 @@
-# Frontend CI jobs for build baseline capture and validation.
+# Frontend CI jobs for build baseline capture, validation, and dual-bundler parity.
 
 .frontend-test-base:
   image: node:22-bookworm
@@ -8,6 +8,65 @@
     key: frontend-yarn
     paths:
       - node_modules/
+
+build-webpack:
+  extends: .frontend-test-base
+  stage: test
+  script:
+    - source scripts/utils.sh
+    - log_info "Building production assets with webpack 4"
+    - NODE_ENV=production node node_modules/webpack/bin/webpack.js --config config/webpack.config.js
+  artifacts:
+    name: webpack-dist
+    paths:
+      - dist/webpack/
+    expire_in: 31d
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+build-rspack:
+  extends: .frontend-test-base
+  stage: test
+  script:
+    - source scripts/utils.sh
+    - log_info "Building production assets with Rspack"
+    - NODE_ENV=production node node_modules/@rspack/cli/bin/rspack.js build --config config/rspack.config.mjs
+  artifacts:
+    name: rspack-dist
+    paths:
+      - dist/rspack/
+    expire_in: 31d
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+bundle-parity:
+  extends: .frontend-test-base
+  stage: test
+  needs:
+    - job: build-webpack
+      artifacts: true
+    - job: build-rspack
+      artifacts: true
+  script:
+    - source scripts/utils.sh
+    - log_info "Comparing webpack and Rspack asset manifests"
+    - |
+      node scripts/frontend/compare_bundles.mjs \
+        --manifest-a dist/webpack/asset-manifest.json \
+        --manifest-b dist/rspack/asset-manifest.json \
+        --output-a dist/webpack \
+        --output-b dist/rspack \
+        --bundler-a webpack4 \
+        --bundler-b rspack
+  artifacts:
+    name: bundle-parity-reports
+    paths:
+      - reports/parity/diff-report.md
+      - reports/parity/size-table.json
+      - reports/parity/parity-defects.json
+    expire_in: 31d
+  rules:
+    - if: $CI_PIPELINE_SOURCE
 
 build-baseline:
   extends: .frontend-test-base
@@ -31,5 +90,65 @@ validate-baseline-schema:
   stage: test
   script:
     - node scripts/frontend/validate_baseline.mjs
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+size-budget:
+  extends: .frontend-test-base
+  stage: test
+  needs:
+    - job: build-webpack
+      artifacts: true
+  script:
+    - source scripts/utils.sh
+    - log_info "Checking per-entry bundle size budget against webpack 4 baseline"
+    - |
+      node scripts/frontend/check_size_budget.mjs \
+        --manifest dist/webpack/asset-manifest.json \
+        --output dist/webpack
+  artifacts:
+    name: size-budget-report
+    paths:
+      - reports/parity/size-budget-report.json
+      - reports/parity/size-budget-report.md
+    expire_in: 31d
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+size-budget-fixture-fail:
+  extends: .frontend-test-base
+  stage: test
+  script:
+    - source scripts/utils.sh
+    - log_info "Verifying size budget gate fails on oversized fixture entry"
+    - |
+      set +e
+      node scripts/frontend/check_size_budget.mjs \
+        --baseline fixtures/frontend/budget/baseline-entry-totals.json \
+        --current-totals fixtures/frontend/budget/current-over-budget.json \
+        --reports-dir reports/parity/fixture-fail \
+        --skip-rebaseline-check
+      exit_code=$?
+      set -e
+      if [ "$exit_code" -ne 1 ]; then
+        log_error "Expected size budget gate to exit 1 for oversized fixture, got $exit_code"
+        exit 1
+      fi
+      log_info "Size budget gate correctly failed on oversized fixture"
+  artifacts:
+    name: size-budget-fixture-fail-report
+    paths:
+      - reports/parity/fixture-fail/size-budget-report.json
+      - reports/parity/fixture-fail/size-budget-report.md
+    expire_in: 31d
+    when: always
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+frontend-unit-tests:
+  extends: .frontend-test-base
+  stage: test
+  script:
+    - yarn test
   rules:
     - if: $CI_PIPELINE_SOURCE
