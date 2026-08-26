@@ -1,0 +1,22 @@
+{
+  "violations": [
+    {
+      "type": "dependency",
+      "rule": {
+        "name": "no-util-to-filter",
+        "severity": "error"
+      },
+      "from": "app/assets/javascripts/work_items/list/utils.js",
+      "to": "app/assets/javascripts/work_items/filter/sort_options.js"
+    },
+    {
+      "type": "dependency",
+      "rule": {
+        "name": "no-util-to-model",
+        "severity": "error"
+      },
+      "from": "app/assets/javascripts/work_items/list/utils.js",
+      "to": "app/assets/javascripts/work_items/model/work_item.js"
+    }
+  ]
+}

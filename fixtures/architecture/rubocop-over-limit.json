@@ -1,0 +1,51 @@
+{
+  "metadata": {
+    "rubocop_version": "1.28.2"
+  },
+  "summary": {
+    "offense_count": 4,
+    "target_file_count": 3,
+    "inspected_file_count": 3
+  },
+  "files": [
+    {
+      "path": "app/models/project.rb",
+      "offenses": [
+        {
+          "cop_name": "Style/Documentation",
+          "severity": "convention",
+          "message": "Missing top-level documentation comment for class Project.",
+          "corrected": false
+        },
+        {
+          "cop_name": "Style/Documentation",
+          "severity": "convention",
+          "message": "Extra documentation offense",
+          "corrected": false
+        }
+      ]
+    },
+    {
+      "path": "app/models/user.rb",
+      "offenses": [
+        {
+          "cop_name": "Style/Documentation",
+          "severity": "convention",
+          "message": "Missing top-level documentation comment for class User.",
+          "corrected": false
+        }
+      ]
+    },
+    {
+      "path": "app/services/project_service.rb",
+      "offenses": [
+        {
+          "cop_name": "Style/Documentation",
+          "severity": "convention",
+          "message": "Missing top-level documentation comment for class ProjectService.",
+          "corrected": false
+        }
+      ]
+    }
+  ]
+}

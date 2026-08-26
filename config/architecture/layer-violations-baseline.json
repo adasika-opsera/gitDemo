@@ -1,0 +1,98 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-23T00:28:36.850Z",
+  "baselineCount": 10,
+  "reductionTargetPercent": 25,
+  "violations": [
+    {
+      "rule": "no-util-to-config",
+      "from": "app/assets/javascripts/lib/utils/database_setup.js",
+      "to": "app/assets/javascripts/config/database_config.js",
+      "key": "no-util-to-config|app/assets/javascripts/lib/utils/database_setup.js|app/assets/javascripts/config/database_config.js",
+      "stableKey": "no-util-to-config|core:util|core:config:database_config",
+      "mirror": null,
+      "message": "app/assets/javascripts/lib/utils/database_setup.js must not depend on app/assets/javascripts/config/database_config.js"
+    },
+    {
+      "rule": "no-util-to-filter",
+      "from": "app/assets/javascripts/ce/work_items/list/utils.js",
+      "to": "app/assets/javascripts/work_items/filter/filter_tokens.js",
+      "key": "no-util-to-filter|app/assets/javascripts/ce/work_items/list/utils.js|app/assets/javascripts/work_items/filter/filter_tokens.js",
+      "stableKey": "no-util-to-filter|ce:util|core:filter:filter_tokens",
+      "mirror": "ce",
+      "message": "app/assets/javascripts/ce/work_items/list/utils.js must not depend on app/assets/javascripts/work_items/filter/filter_tokens.js"
+    },
+    {
+      "rule": "no-util-to-filter",
+      "from": "app/assets/javascripts/ee/work_items/list/utils.js",
+      "to": "app/assets/javascripts/work_items/filter/sort_options.js",
+      "key": "no-util-to-filter|app/assets/javascripts/ee/work_items/list/utils.js|app/assets/javascripts/work_items/filter/sort_options.js",
+      "stableKey": "no-util-to-filter|ee:util|core:filter:sort_options",
+      "mirror": "ee",
+      "message": "app/assets/javascripts/ee/work_items/list/utils.js must not depend on app/assets/javascripts/work_items/filter/sort_options.js"
+    },
+    {
+      "rule": "no-util-to-filter",
+      "from": "app/assets/javascripts/lib/utils/format_helpers.js",
+      "to": "app/assets/javascripts/work_items/filter/sort_options.js",
+      "key": "no-util-to-filter|app/assets/javascripts/lib/utils/format_helpers.js|app/assets/javascripts/work_items/filter/sort_options.js",
+      "stableKey": "no-util-to-filter|core:util|core:filter:sort_options",
+      "mirror": null,
+      "message": "app/assets/javascripts/lib/utils/format_helpers.js must not depend on app/assets/javascripts/work_items/filter/sort_options.js"
+    },
+    {
+      "rule": "no-util-to-filter",
+      "from": "app/assets/javascripts/work_items/list/utils.js",
+      "to": "app/assets/javascripts/work_items/filter/sort_options.js",
+      "key": "no-util-to-filter|app/assets/javascripts/work_items/list/utils.js|app/assets/javascripts/work_items/filter/sort_options.js",
+      "stableKey": "no-util-to-filter|core:util|core:filter:sort_options",
+      "mirror": null,
+      "message": "app/assets/javascripts/work_items/list/utils.js must not depend on app/assets/javascripts/work_items/filter/sort_options.js"
+    },
+    {
+      "rule": "no-util-to-filter",
+      "from": "app/assets/javascripts/work_items/utils.js",
+      "to": "app/assets/javascripts/work_items/filter/filter_tokens.js",
+      "key": "no-util-to-filter|app/assets/javascripts/work_items/utils.js|app/assets/javascripts/work_items/filter/filter_tokens.js",
+      "stableKey": "no-util-to-filter|core:util|core:filter:filter_tokens",
+      "mirror": null,
+      "message": "app/assets/javascripts/work_items/utils.js must not depend on app/assets/javascripts/work_items/filter/filter_tokens.js"
+    },
+    {
+      "rule": "no-util-to-filter",
+      "from": "app/assets/javascripts/work_items/utils.js",
+      "to": "app/assets/javascripts/work_items/filter/query_builder.js",
+      "key": "no-util-to-filter|app/assets/javascripts/work_items/utils.js|app/assets/javascripts/work_items/filter/query_builder.js",
+      "stableKey": "no-util-to-filter|core:util|core:filter:query_builder",
+      "mirror": null,
+      "message": "app/assets/javascripts/work_items/utils.js must not depend on app/assets/javascripts/work_items/filter/query_builder.js"
+    },
+    {
+      "rule": "no-util-to-model",
+      "from": "app/assets/javascripts/lib/utils/format_helpers.js",
+      "to": "app/assets/javascripts/work_items/model/work_item.js",
+      "key": "no-util-to-model|app/assets/javascripts/lib/utils/format_helpers.js|app/assets/javascripts/work_items/model/work_item.js",
+      "stableKey": "no-util-to-model|core:util|core:model:work_item",
+      "mirror": null,
+      "message": "app/assets/javascripts/lib/utils/format_helpers.js must not depend on app/assets/javascripts/work_items/model/work_item.js"
+    },
+    {
+      "rule": "no-util-to-model",
+      "from": "app/assets/javascripts/work_items/list/utils.js",
+      "to": "app/assets/javascripts/work_items/model/work_item.js",
+      "key": "no-util-to-model|app/assets/javascripts/work_items/list/utils.js|app/assets/javascripts/work_items/model/work_item.js",
+      "stableKey": "no-util-to-model|core:util|core:model:work_item",
+      "mirror": null,
+      "message": "app/assets/javascripts/work_items/list/utils.js must not depend on app/assets/javascripts/work_items/model/work_item.js"
+    },
+    {
+      "rule": "no-util-to-model",
+      "from": "app/assets/javascripts/work_items/utils.js",
+      "to": "app/assets/javascripts/work_items/model/assignee.js",
+      "key": "no-util-to-model|app/assets/javascripts/work_items/utils.js|app/assets/javascripts/work_items/model/assignee.js",
+      "stableKey": "no-util-to-model|core:util|core:model:assignee",
+      "mirror": null,
+      "message": "app/assets/javascripts/work_items/utils.js must not depend on app/assets/javascripts/work_items/model/assignee.js"
+    }
+  ]
+}

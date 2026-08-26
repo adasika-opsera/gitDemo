@@ -227,3 +227,102 @@ frontend-unit-tests:
     - yarn test
   rules:
     - if: $CI_PIPELINE_SOURCE
+
+layer-ratchet:
+  extends: .frontend-test-base
+  stage: test
+  script:
+    - source scripts/utils.sh
+    - log_info "Checking architectural layer violations against committed baseline"
+    - node scripts/architecture/check_layer_ratchet.mjs
+  artifacts:
+    name: layer-ratchet-reports
+    paths:
+      - reports/architecture/layer-ratchet-progress.json
+      - reports/architecture/layer-ratchet-report.md
+    expire_in: 31d
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+layer-ratchet-fixture-fail:
+  extends: .frontend-test-base
+  stage: test
+  script:
+    - source scripts/utils.sh
+    - log_info "Verifying layer ratchet gate fails on net-new fixture violation"
+    - |
+      set +e
+      node scripts/architecture/check_layer_ratchet.mjs \
+        --baseline fixtures/architecture/layer-baseline.json \
+        --current-violations fixtures/architecture/layer-current-net-new.json \
+        --reports-dir reports/architecture/fixture-fail
+      exit_code=$?
+      set -e
+      if [ "$exit_code" -ne 1 ]; then
+        log_error "Expected layer ratchet gate to exit 1 for net-new fixture, got $exit_code"
+        exit 1
+      fi
+      log_info "Layer ratchet gate correctly failed on net-new fixture"
+  artifacts:
+    name: layer-ratchet-fixture-fail-report
+    paths:
+      - reports/architecture/fixture-fail/layer-ratchet-progress.json
+      - reports/architecture/fixture-fail/layer-ratchet-report.md
+    expire_in: 31d
+    when: always
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+ruby-ratchet:
+  image: ruby:3.2-bookworm
+  stage: test
+  before_script:
+    - apt-get update && apt-get install -y nodejs npm
+    - npm install
+    - bundle install
+  cache:
+    key: ruby-ratchet
+    paths:
+      - vendor/bundle
+      - node_modules/
+  script:
+    - source scripts/utils.sh
+    - log_info "Checking Ruby per-directory RuboCop ratchet"
+    - node scripts/architecture/check_ruby_ratchet.mjs
+  artifacts:
+    name: ruby-ratchet-reports
+    paths:
+      - reports/architecture/ruby-ratchet-report.json
+    expire_in: 31d
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+ruby-ratchet-fixture-fail:
+  image: ruby:3.2-bookworm
+  stage: test
+  before_script:
+    - apt-get update && apt-get install -y nodejs npm
+    - npm install
+  script:
+    - source scripts/utils.sh
+    - log_info "Verifying Ruby ratchet gate fails on over-limit fixture"
+    - |
+      set +e
+      node scripts/architecture/check_ruby_ratchet.mjs \
+        --rubocop-json fixtures/architecture/rubocop-over-limit.json \
+        --reports-dir reports/architecture/ruby-fixture-fail
+      exit_code=$?
+      set -e
+      if [ "$exit_code" -ne 1 ]; then
+        log_error "Expected Ruby ratchet gate to exit 1 for over-limit fixture, got $exit_code"
+        exit 1
+      fi
+      log_info "Ruby ratchet gate correctly failed on over-limit fixture"
+  artifacts:
+    name: ruby-ratchet-fixture-fail-report
+    paths:
+      - reports/architecture/ruby-fixture-fail/ruby-ratchet-report.json
+    expire_in: 31d
+    when: always
+  rules:
+    - if: $CI_PIPELINE_SOURCE

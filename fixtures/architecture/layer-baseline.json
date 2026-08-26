@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "baselineCount": 3,
+  "reductionTargetPercent": 25,
+  "violations": [
+    {
+      "rule": "no-util-to-filter",
+      "from": "app/assets/javascripts/work_items/list/utils.js",
+      "to": "app/assets/javascripts/work_items/filter/sort_options.js",
+      "key": "no-util-to-filter|app/assets/javascripts/work_items/list/utils.js|app/assets/javascripts/work_items/filter/sort_options.js",
+      "stableKey": "no-util-to-filter|core:util|core:filter:sort_options"
+    },
+    {
+      "rule": "no-util-to-model",
+      "from": "app/assets/javascripts/work_items/list/utils.js",
+      "to": "app/assets/javascripts/work_items/model/work_item.js",
+      "key": "no-util-to-model|app/assets/javascripts/work_items/list/utils.js|app/assets/javascripts/work_items/model/work_item.js",
+      "stableKey": "no-util-to-model|core:util|core:model:work_item"
+    },
+    {
+      "rule": "no-util-to-config",
+      "from": "app/assets/javascripts/lib/utils/database_setup.js",
+      "to": "app/assets/javascripts/config/database_config.js",
+      "key": "no-util-to-config|app/assets/javascripts/lib/utils/database_setup.js|app/assets/javascripts/config/database_config.js",
+      "stableKey": "no-util-to-config|core:util|core:config:database_config"
+    }
+  ]
+}

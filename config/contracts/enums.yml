@@ -1,0 +1,42 @@
+# Append-only cross-language enum contract — single source of truth.
+# Values may only be appended; existing names/order must never change.
+version: 1
+enums:
+  issue_type:
+    description: Types displayed on issue lists (Issue::TYPES_FOR_LIST)
+    values:
+      - name: issue
+        ruby: issue
+        js: issue
+        description: Standard work item
+        since: "1.0"
+      - name: incident
+        ruby: incident
+        js: incident
+        description: Production incident
+        since: "1.0"
+      - name: test_case
+        ruby: test_case
+        js: testCase
+        description: Test case work item
+        since: "1.0"
+      - name: task
+        ruby: task
+        js: task
+        description: Task work item
+        since: "1.0"
+      - name: objective
+        ruby: objective
+        js: objective
+        description: OKR objective
+        since: "1.0"
+      - name: key_result
+        ruby: key_result
+        js: keyResult
+        description: OKR key result
+        since: "1.0"
+      - name: ticket
+        ruby: ticket
+        js: ticket
+        description: Service desk ticket
+        since: "1.0"

@@ -2,7 +2,7 @@
   "name": "gitdemo-frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "Demo frontend build baseline, dual-bundler parity, size budget gate, and runtime smoke suite (WO-001–WO-004)",
+  "description": "Demo frontend build baseline, dual-bundler parity, size budget gate, runtime smoke suite, and architecture ratchets (WO-001–WO-006)",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -14,17 +14,22 @@
     "validate-baseline": "node scripts/frontend/validate_baseline.mjs",
     "check-size-budget": "node scripts/frontend/check_size_budget.mjs",
     "smoke-entry-points": "node scripts/frontend/smoke_entry_points.mjs",
+    "record-layer-baseline": "node scripts/architecture/record_layer_baseline.mjs",
+    "check-layer-ratchet": "node scripts/architecture/check_layer_ratchet.mjs",
+    "check-ruby-ratchet": "node scripts/architecture/check_ruby_ratchet.mjs",
     "test": "jest",
     "test:baseline": "jest tests/frontend/manifestNormalizer.test.js",
     "test:parity": "jest tests/frontend/compareBundles.test.js",
     "test:size-budget": "jest tests/frontend/checkSizeBudget.test.js",
-    "test:smoke": "jest tests/frontend/smokeEntryPoints.test.js"
+    "test:smoke": "jest tests/frontend/smokeEntryPoints.test.js",
+    "test:architecture": "jest tests/architecture/layerRatchet.test.js"
   },
   "devDependencies": {
     "@rspack/cli": "^1.7.12",
     "@rspack/core": "^1.7.12",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
+    "dependency-cruiser": "^16.10.4",
     "jest": "^29.7.0",
     "js-yaml": "^4.1.0",
     "puppeteer": "^24.43.1",

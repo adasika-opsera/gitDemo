@@ -1,0 +1,15 @@
+version: 1
+enums:
+  sample_enum:
+    description: Minimal fixture enum for generator unit tests
+    values:
+      - name: alpha_one
+        ruby: alpha_one
+        js: alphaOne
+        description: First fixture value
+        since: "1.0"
+      - name: beta_two
+        ruby: beta_two
+        js: betaTwo
+        description: Second fixture value
+        since: "1.0"

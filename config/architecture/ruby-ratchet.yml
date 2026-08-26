@@ -1,0 +1,6 @@
+version: 1
+directories:
+  app/models:
+    Style/Documentation: 2
+  app/services:
+    Style/Documentation: 1

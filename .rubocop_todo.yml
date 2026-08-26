@@ -1,0 +1,7 @@
+# Per-directory ratchet allowances for existing upward-dependency hotspots.
+
+Style/Documentation:
+  Exclude:
+    - app/models/project.rb
+    - app/models/user.rb
+    - app/services/project_service.rb
