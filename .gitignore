@@ -4,3 +4,11 @@ reports/
 config/parity/webpack4-baseline.rerun.json
 *.log
 vendor/bundle/
+tmp/
+.forge-commit-ready
+.forge/project-id
+.forge/hook-version
+.forge/changed-files.log
+.cursor/hooks.json
+.cursor/hooks/
+.cursor/rules/forge-workflow.mdc

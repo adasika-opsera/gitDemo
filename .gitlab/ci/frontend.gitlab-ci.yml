@@ -297,6 +297,41 @@ ruby-ratchet:
   rules:
     - if: $CI_PIPELINE_SOURCE
 
+# GraphQL schema dump is an input to authz coverage. Retention stays at 30 days;
+# the coverage report below is the audit artifact and is kept for 13 months.
+graphql-schema-dump:
+  image: ruby:3.2-bookworm
+  stage: test
+  before_script:
+    - bundle install
+  script:
+    - bundle exec rake gitlab:graphql:schema:dump
+  artifacts:
+    name: graphql-schema-dump
+    paths:
+      - tmp/tests/graphql/gitlab_schema.graphql
+    expire_in: 30 days
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
+graphql-authz-coverage:
+  image: ruby:3.2-bookworm
+  stage: test
+  needs:
+    - job: graphql-schema-dump
+      artifacts: true
+  before_script:
+    - bundle install
+  script:
+    - bundle exec rake gitlab:graphql:authz_coverage
+  artifacts:
+    name: graphql-authz-coverage
+    paths:
+      - tmp/reports/graphql_authz_coverage.json
+    expire_in: 13 mos
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
 ruby-ratchet-fixture-fail:
   image: ruby:3.2-bookworm
   stage: test

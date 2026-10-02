@@ -20,6 +20,6 @@ RSpec.configure do |config|
   config.warnings = true
 end
 
-FIXTURES_DIR = File.expand_path('fixtures/contracts', __dir__)
+FIXTURES_DIR = File.expand_path('../fixtures/contracts', __dir__)
 SCHEMA_PATH = File.expand_path('../config/contracts/enums.schema.json', __dir__)
 ROOT = File.expand_path('..', __dir__)

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gitdemo.local/schemas/graphql_authz_coverage_report.schema.json",
+  "title": "GraphQL authorization coverage report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generatedAt", "gitSha", "edition", "eeOnlyExcluded", "totals", "mutations", "fields"],
+  "properties": {
+    "generatedAt": { "type": "string", "minLength": 1 },
+    "gitSha": { "type": "string", "minLength": 1 },
+    "edition": { "type": "string", "enum": ["ce", "ee"] },
+    "eeOnlyExcluded": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "totals": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mutations",
+        "declared",
+        "undeclared",
+        "coveragePercent",
+        "fields",
+        "fieldsDeclared",
+        "fieldsUndeclared",
+        "fieldsCoveragePercent",
+        "overallCoveragePercent",
+        "redactedFieldCount"
+      ],
+      "properties": {
+        "mutations": { "type": "integer", "minimum": 0 },
+        "declared": { "type": "integer", "minimum": 0 },
+        "undeclared": { "type": "integer", "minimum": 0 },
+        "coveragePercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "fields": { "type": "integer", "minimum": 0 },
+        "fieldsDeclared": { "type": "integer", "minimum": 0 },
+        "fieldsUndeclared": { "type": "integer", "minimum": 0 },
+        "fieldsCoveragePercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "overallCoveragePercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "redactedFieldCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "mutations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/entry" }
+    },
+    "fields": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/fieldEntry" }
+    }
+  },
+  "$defs": {
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "abilities", "declared", "deprecated"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "abilities": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "declared": { "type": "boolean" },
+        "deprecated": { "type": "boolean" }
+      }
+    },
+    "fieldEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "abilities", "declared", "deprecated", "owner"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "abilities": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "declared": { "type": "boolean" },
+        "deprecated": { "type": "boolean" }
+      }
+    }
+  }
+}
