@@ -1,0 +1,8 @@
+[
+  {
+    "query": "query { echo }"
+  },
+  {
+    "query": "mutation { destroyIssue(iid: \"1\") { issue { iid } } }"
+  }
+]

@@ -1,0 +1,3 @@
+{
+  "query": "mutation { updateIssue(iid: \"404\") { issue { iid } } }"
+}

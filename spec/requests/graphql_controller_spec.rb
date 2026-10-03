@@ -11,16 +11,19 @@ RSpec.describe GraphqlController do
     JSON.parse(File.read(File.join(fixtures, name)))
   end
 
-  def user(id: 4, two_factor_required: false, two_factor_verified: false)
-    Struct.new(:id, :two_factor_required, :two_factor_verified).new(id, two_factor_required, two_factor_verified)
+  def user(id: 4, two_factor_required: false, two_factor_verified: false, abilities: %w[create_issue read_issue update_issue])
+    Struct.new(:id, :two_factor_required, :two_factor_verified, :abilities).new(
+      id, two_factor_required, two_factor_verified, abilities
+    )
   end
 
-  def call(params:, current_user: nil, sessionless: false, authenticity_token: nil)
+  def call(params:, current_user: nil, sessionless: false, authenticity_token: nil, subjects: {})
     described_class.call(
       params: params,
       current_user: current_user,
       sessionless: sessionless,
-      authenticity_token: authenticity_token
+      authenticity_token: authenticity_token,
+      subjects: subjects
     )
   end
 
