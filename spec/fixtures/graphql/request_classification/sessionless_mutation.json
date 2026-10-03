@@ -1,0 +1,3 @@
+{
+  "query": "mutation { createIssue(title: \"demo\") { issue { title } } }"
+}

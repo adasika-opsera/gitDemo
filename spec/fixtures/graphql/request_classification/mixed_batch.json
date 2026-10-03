@@ -1,0 +1,4 @@
+[
+  { "query": "query { echo }" },
+  { "query": "mutation { closeIssue(iid: \"1\") { issue { iid } } }", "operationName": "CloseIssue" }
+]
