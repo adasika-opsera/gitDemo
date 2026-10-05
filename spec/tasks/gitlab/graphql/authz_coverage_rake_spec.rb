@@ -54,6 +54,46 @@ RSpec.describe 'gitlab:graphql:authz_coverage' do
     end
   end
 
+  it 'passes the guard on the application schema and keeps the report under 1 MB' do
+    Dir.mktmpdir do |dir|
+      dump = File.join(dir, 'gitlab_schema.graphql')
+      report_path = File.join(dir, 'graphql_authz_coverage.json')
+      env = {
+        'GRAPHQL_SCHEMA_DUMP' => dump,
+        'GRAPHQL_AUTHZ_COVERAGE_REPORT' => report_path,
+        'GRAPHQL_AUTHZ_COVERAGE_MODE' => 'guard'
+      }
+
+      stdout, status = rake('gitlab:graphql:schema:dump', 'gitlab:graphql:authz_coverage', env: env)
+      report = JSON.parse(File.read(report_path))
+
+      expect(status).to be_success, stdout
+      expect(stdout).to include('Authorization coverage guard passed at 100%.')
+      expect(report['totals']['coveragePercent']).to eq(100.0)
+      expect(File.size(report_path)).to be < 1_000_000
+      expect(JSON.generate(report)).not_to include('secret')
+    end
+  end
+
+  it 'fails the guard closed when the schema dump cannot be read' do
+    Dir.mktmpdir do |dir|
+      dump = File.join(dir, 'missing', 'gitlab_schema.graphql')
+      report_path = File.join(dir, 'graphql_authz_coverage.json')
+      stdout, status = rake(
+        'gitlab:graphql:authz_coverage',
+        env: {
+          'GRAPHQL_SCHEMA_DUMP' => dump,
+          'GRAPHQL_AUTHZ_COVERAGE_REPORT' => report_path,
+          'GRAPHQL_AUTHZ_COVERAGE_MODE' => 'guard'
+        }
+      )
+
+      expect(status).not_to be_success
+      expect(stdout).to include("schema dump artifact is missing: expected #{dump}")
+      expect(File.file?(report_path)).to be(false)
+    end
+  end
+
   it 'fails with the expected dump path and does not write a report when the dump is missing' do
     Dir.mktmpdir do |dir|
       dump = File.join(dir, 'missing', 'gitlab_schema.graphql')

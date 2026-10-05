@@ -18,6 +18,10 @@ namespace :gitlab do
       puts "Wrote #{output_path}"
       puts "Mutations: #{totals['declared']}/#{totals['mutations']} declared (#{totals['coveragePercent']}%), " \
            "Fields: #{totals['fieldsDeclared']}/#{totals['fields']} declared (#{totals['fieldsCoveragePercent']}%)"
+      next unless ENV['GRAPHQL_AUTHZ_COVERAGE_MODE'] == 'guard'
+
+      Gitlab::Graphql::AuthzCoverage::Guard.enforce!(report)
+      puts 'Authorization coverage guard passed at 100%.'
     end
   end
 end

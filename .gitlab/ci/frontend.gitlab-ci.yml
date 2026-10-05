@@ -332,6 +332,31 @@ graphql-authz-coverage:
   rules:
     - if: $CI_PIPELINE_SOURCE
 
+graphql-authz-guard:
+  image: ruby:3.2-bookworm
+  stage: test
+  needs:
+    - job: graphql-schema-dump
+      artifacts: true
+  before_script:
+    - bundle install
+  script:
+    - GRAPHQL_AUTHZ_COVERAGE_MODE=guard bundle exec rake gitlab:graphql:authz_coverage
+  artifacts:
+    name: graphql-authz-coverage
+    when: always
+    paths:
+      - tmp/reports/graphql_authz_coverage.json
+    expire_in: 13 mos
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - app/graphql/**/*
+        - lib/gitlab/graphql/**/*
+        - app/controllers/graphql_controller.rb
+        - "**/*resolver*"
+
 graphql-authorize-cop:
   image: ruby:3.2-bookworm
   stage: test

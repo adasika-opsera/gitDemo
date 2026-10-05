@@ -8,6 +8,7 @@ module Gitlab
       class SchemaDumpMismatchError < Error; end
       class TraversalError < Error; end
       class SchemaValidationError < Error; end
+      class GuardError < Error; end
     end
   end
 end

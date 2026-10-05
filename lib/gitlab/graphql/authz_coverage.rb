@@ -10,6 +10,7 @@ require 'gitlab/graphql/authz_coverage/collector'
 require 'gitlab/graphql/authz_coverage/report_builder'
 require 'gitlab/graphql/authz_coverage/report_schema_validator'
 require 'gitlab/graphql/authz_coverage/schema_dump_cross_check'
+require 'gitlab/graphql/authz_coverage/guard'
 
 module Gitlab
   module Graphql
