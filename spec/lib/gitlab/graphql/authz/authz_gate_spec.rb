@@ -67,6 +67,12 @@ RSpec.describe Gitlab::Graphql::Authz::AuthzGate do
   end
 
   it 'denies an undeclared mutation in enforce mode' do
+    lookup = instance_double(
+      Gitlab::Graphql::Authz::DeclarationLookup,
+      for_selection: { kind: :undeclared, abilities: [], expects_subject: false }
+    )
+    allow(Gitlab::Graphql::Authz::DeclarationLookup).to receive(:new).and_return(lookup)
+
     decision = gate_for(fixture('single_undeclared.json')).call.entries.first
 
     expect(decision.outcome).to eq('deny')
@@ -79,7 +85,8 @@ RSpec.describe Gitlab::Graphql::Authz::AuthzGate do
 
     expect(result.multiplex).to be(true)
     expect(result.entries.map(&:outcome)).to eq(%w[allow deny])
-    expect(result.entries.map(&:reason)).to eq(%w[public undeclared])
+    # destroyIssue declares destroy_issue, which this caller does not hold.
+    expect(result.entries.map(&:reason)).to eq(%w[public forbidden])
     expect(result.halt_request?).to be(false)
   end
 

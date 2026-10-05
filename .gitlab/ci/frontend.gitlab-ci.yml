@@ -332,6 +332,16 @@ graphql-authz-coverage:
   rules:
     - if: $CI_PIPELINE_SOURCE
 
+graphql-authorize-cop:
+  image: ruby:3.2-bookworm
+  stage: test
+  before_script:
+    - bundle install
+  script:
+    - bundle exec rubocop --only Graphql/AuthorizeMutation
+  rules:
+    - if: $CI_PIPELINE_SOURCE
+
 ruby-ratchet-fixture-fail:
   image: ruby:3.2-bookworm
   stage: test

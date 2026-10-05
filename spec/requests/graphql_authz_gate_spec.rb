@@ -57,7 +57,7 @@ RSpec.describe GraphqlController, 'authz gate' do
     expect(response[:body]).to eq('data' => { 'echo' => 'ok' })
   end
 
-  it 'denies an undeclared mutation and still consumes rate limit' do
+  it 'denies destroyIssue when the caller lacks destroy_issue and still consumes rate limit' do
     response = call(params: fixture('single_undeclared.json'))
 
     expect(response[:status]).to eq(403)

@@ -10,8 +10,10 @@ RSpec.describe 'gitlab:graphql:authz_coverage' do
   let(:root) { ROOT }
   let(:schema_path) { File.join(root, Gitlab::Graphql::AuthzCoverage::JSON_SCHEMA_RELATIVE) }
 
+  # Invoke rake directly. Nested `bundle exec` exits non-zero on Ruby 4
+  # even when the task succeeds, which hides the real status.
   def rake(*tasks, env: {})
-    Open3.capture2e(env, 'bundle', 'exec', 'rake', *tasks, chdir: root)
+    Open3.capture2e(env, 'rake', *tasks, chdir: root)
   end
 
   it 'runs against the application schema and validates a non-empty report' do
@@ -31,11 +33,22 @@ RSpec.describe 'gitlab:graphql:authz_coverage' do
 
       expect(report['totals']['mutations']).to be > 0
       expect(report['mutations'].map { |entry| entry['name'] }).to include('CreateIssue', 'DestroyIssue', 'UpdateIssue', 'CloseIssue')
-      expect(report['mutations'].find { |entry| entry['name'] == 'DestroyIssue' }).to include('declared' => false, 'abilities' => [])
+      destroy_issue = report['mutations'].find { |entry| entry['name'] == 'DestroyIssue' }
+      expect(destroy_issue).to include('declared' => true, 'abilities' => ['destroy_issue'])
       expect(report['mutations'].find { |entry| entry['name'] == 'UpdateIssue' }['abilities']).to eq(%w[read_issue update_issue])
+      expect(report['totals']['coveragePercent']).to eq(100.0)
+      expect(report['totals']['fieldsCoveragePercent']).to eq(100.0)
       expect(report['eeOnlyExcluded']).to eq(['ExportAuditEvents'])
-      expect(report['fields'].map { |entry| entry['name'] }).to include('Issue.iid', 'Issue.confidentialNote')
+      confidential = report['fields'].find { |entry| entry['name'] == 'Issue.confidentialNote' }
+      expect(confidential).to include('declared' => true, 'abilities' => ['read_issue'])
+      expect(report['fields'].map { |entry| entry['name'] }).to include('Issue.iid')
       expect(report['fields'].map { |entry| entry['name'] }).not_to include('Issue.title')
+      expect(report['publicFields']).to include(
+        'name' => 'Issue.title',
+        'owner' => 'Issue',
+        'reason' => 'Issue titles are visible without an ability check.'
+      )
+      expect(report['publicFields'].map { |entry| entry['reason'] }).to all(match(/\S/))
       expect(JSON.generate(report)).not_to include('secret')
       expect(JSON.generate(report)).not_to include('webhookSecretToken')
     end

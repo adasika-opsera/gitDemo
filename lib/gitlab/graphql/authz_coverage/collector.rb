@@ -17,9 +17,12 @@ module Gitlab
           raise TraversalError, 'schema is missing; refusing to emit a partial inventory' if @schema.nil?
           raise TraversalError, 'schema has no mutation type; refusing to emit an empty inventory' if @schema.mutation.nil?
 
+          mutations = collect_mutations
+          field_result = collect_fields
           {
-            mutations: collect_mutations,
-            fields: collect_fields.fetch(:fields),
+            mutations: mutations,
+            fields: field_result.fetch(:fields),
+            public_fields: field_result.fetch(:public_fields),
             ee_only_excluded: @ee_only_excluded,
             redacted_field_count: @redacted_field_count,
             edition: @ee ? 'ee' : 'ce'
@@ -52,27 +55,43 @@ module Gitlab
 
         def collect_fields
           @redacted_field_count = 0
-          fields = []
+          grouped = { fields: [], public_fields: [] }
 
           object_types.each do |type|
-            type.fields.each_value do |field|
-              next unless inventory_field?(field)
-
-              if credential_like?(field)
-                @redacted_field_count += 1
-                next
-              end
-
-              next if field.public_data?
-
-              abilities = Array(field.required_abilities).map(&:to_s)
-              name = "#{type.graphql_name}.#{field.graphql_name}"
-              reject_credential_abilities!(abilities, name)
-              fields << entry(name, abilities, deprecated?(field)).merge('owner' => type.graphql_name)
-            end
+            type.fields.each_value { |field| classify_field(type, field, grouped) }
           end
 
-          { fields: fields.sort_by { |field| field['name'] } }
+          {
+            fields: grouped[:fields].sort_by { |field| field['name'] },
+            public_fields: grouped[:public_fields].sort_by { |field| field['name'] }
+          }
+        end
+
+        def classify_field(type, field, grouped)
+          return unless inventory_field?(field)
+
+          if credential_like?(field)
+            @redacted_field_count += 1
+            return
+          end
+
+          if field.public_data?
+            grouped[:public_fields] << public_entry(type, field)
+            return
+          end
+
+          abilities = Array(field.required_abilities).map(&:to_s)
+          name = "#{type.graphql_name}.#{field.graphql_name}"
+          reject_credential_abilities!(abilities, name)
+          grouped[:fields] << entry(name, abilities, deprecated?(field)).merge('owner' => type.graphql_name)
+        end
+
+        def public_entry(type, field)
+          name = "#{type.graphql_name}.#{field.graphql_name}"
+          reason = field.respond_to?(:public_reason) ? field.public_reason.to_s : ''
+          reject_credential_abilities!([reason], name) unless reason.empty?
+
+          { 'name' => name, 'owner' => type.graphql_name, 'reason' => reason }
         end
 
         def object_types

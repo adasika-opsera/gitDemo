@@ -1,5 +1,14 @@
 inherit_from: .rubocop_todo.yml
 
+require:
+  - ./lib/rubocop/cop/graphql/authorize_mutation
+
+Graphql/AuthorizeMutation:
+  Enabled: true
+  Include:
+    - app/graphql/mutations/**/*.rb
+    - ee/app/graphql/mutations/**/*.rb
+
 AllCops:
   NewCops: enable
   TargetRubyVersion: 2.6

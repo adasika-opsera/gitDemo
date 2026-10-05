@@ -4,7 +4,10 @@ module Mutations
   module Issues
     class DestroyIssue < BaseMutation
       graphql_name 'DestroyIssue'
-      description 'Destroy an issue. Deliberately undeclared so the inventory records the gap.'
+      description 'Destroy an issue'
+      # The resolver has no inline check. Sibling issue mutations declare
+      # `<verb>_issue`, so the strictest matching ability is destroy_issue.
+      authorize :destroy_issue
 
       argument :iid, GraphQL::Types::ID, required: true
 

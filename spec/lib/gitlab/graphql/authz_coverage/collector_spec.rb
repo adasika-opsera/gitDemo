@@ -57,6 +57,15 @@ RSpec.describe Gitlab::Graphql::AuthzCoverage::Collector do
     expect(ee_collected[:edition]).to eq('ee')
   end
 
+  it 'records a public classification reason without counting the field as a gap' do
+    expect(collected[:public_fields]).to include(
+      'name' => 'Widget.name',
+      'owner' => 'Widget',
+      'reason' => 'Widget name is public catalog data.'
+    )
+    expect(field('Widget.name')).to be_nil
+  end
+
   it 'inventories non-public fields and omits public fields' do
     expect(field('Widget.id')).to include('abilities' => ['read_widget'], 'declared' => true, 'owner' => 'Widget')
     expect(field('Widget.note')).to include('abilities' => [], 'declared' => false, 'owner' => 'Widget')

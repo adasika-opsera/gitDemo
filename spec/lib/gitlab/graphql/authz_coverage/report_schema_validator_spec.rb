@@ -29,7 +29,8 @@ RSpec.describe Gitlab::Graphql::AuthzCoverage::ReportSchemaValidator do
       'mutations' => [
         { 'name' => 'CreateWidget', 'abilities' => ['create_widget'], 'declared' => true, 'deprecated' => false }
       ],
-      'fields' => []
+      'fields' => [],
+      'publicFields' => []
     }
   end
 

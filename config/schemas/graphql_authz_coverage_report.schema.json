@@ -4,7 +4,7 @@
   "title": "GraphQL authorization coverage report",
   "type": "object",
   "additionalProperties": false,
-  "required": ["generatedAt", "gitSha", "edition", "eeOnlyExcluded", "totals", "mutations", "fields"],
+  "required": ["generatedAt", "gitSha", "edition", "eeOnlyExcluded", "totals", "mutations", "fields", "publicFields"],
   "properties": {
     "generatedAt": { "type": "string", "minLength": 1 },
     "gitSha": { "type": "string", "minLength": 1 },
@@ -48,6 +48,10 @@
     "fields": {
       "type": "array",
       "items": { "$ref": "#/$defs/fieldEntry" }
+    },
+    "publicFields": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/publicField" }
     }
   },
   "$defs": {
@@ -78,6 +82,16 @@
         },
         "declared": { "type": "boolean" },
         "deprecated": { "type": "boolean" }
+      }
+    },
+    "publicField": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "owner", "reason"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "reason": { "type": "string", "minLength": 1 }
       }
     }
   }

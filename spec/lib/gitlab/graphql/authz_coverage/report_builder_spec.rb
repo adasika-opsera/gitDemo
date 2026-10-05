@@ -18,7 +18,10 @@ RSpec.describe Gitlab::Graphql::AuthzCoverage::ReportBuilder do
       ],
       ee_only_excluded: ['ExportWidget'],
       redacted_field_count: 1,
-      edition: 'ce'
+      edition: 'ce',
+      public_fields: [
+        { 'name' => 'Widget.name', 'owner' => 'Widget', 'reason' => 'Widget name is public catalog data.' }
+      ]
     }
   end
 
@@ -41,6 +44,7 @@ RSpec.describe Gitlab::Graphql::AuthzCoverage::ReportBuilder do
     expect(report['mutations'].map { |entry| entry['name'] }).to eq(%w[CreateWidget DestroyWidget])
     expect(report['fields'].map { |entry| entry['name'] }).to eq(['Widget.id', 'Widget.note'])
     expect(report['eeOnlyExcluded']).to eq(['ExportWidget'])
+    expect(report['publicFields'].map { |entry| entry['name'] }).to eq(['Widget.name'])
     expect(report['gitSha']).to eq('abc123')
     expect(report['generatedAt']).to eq('2026-10-02T00:00:00Z')
     expect(report['edition']).to eq('ce')
@@ -56,7 +60,8 @@ RSpec.describe Gitlab::Graphql::AuthzCoverage::ReportBuilder do
       fields: [],
       ee_only_excluded: [],
       redacted_field_count: 0,
-      edition: 'ce'
+      edition: 'ce',
+      public_fields: []
     ).build(git_sha: 'abc123')
 
     expect(empty['totals']['coveragePercent']).to eq(100.0)

@@ -6,13 +6,14 @@ require 'gitlab/graphql/authorize/authorize_resource'
 # Independent of app/graphql so unit tests do not load the application schema.
 module AuthzCoverageFixtures
   class MiniField < GraphQL::Schema::Field
-    def initialize(*args, authorize: nil, public: false, **kwargs, &block)
+    def initialize(*args, authorize: nil, public: false, public_reason: nil, **kwargs, &block)
       @required_abilities = Array(authorize).flatten.compact.map(&:to_s)
       @public_data = public == true
+      @public_reason = @public_data ? public_reason.to_s : nil
       super(*args, **kwargs, &block)
     end
 
-    attr_reader :required_abilities
+    attr_reader :required_abilities, :public_reason
 
     def public_data?
       @public_data
@@ -31,7 +32,8 @@ module AuthzCoverageFixtures
   class WidgetType < MiniObject
     graphql_name 'Widget'
     field :id, GraphQL::Types::ID, null: false, authorize: :read_widget
-    field :name, GraphQL::Types::String, null: true, public: true
+    field :name, GraphQL::Types::String, null: true, public: true,
+      public_reason: 'Widget name is public catalog data.'
     field :note, GraphQL::Types::String, null: true
     field :widget_secret_token, GraphQL::Types::String, null: true
   end
@@ -92,7 +94,8 @@ module AuthzCoverageFixtures
 
   class QueryType < MiniObject
     graphql_name 'Query'
-    field :echo, GraphQL::Types::String, null: true, public: true
+    field :echo, GraphQL::Types::String, null: true, public: true,
+      public_reason: 'Echo is a public probe.'
   end
 
   class MutationType < MiniObject

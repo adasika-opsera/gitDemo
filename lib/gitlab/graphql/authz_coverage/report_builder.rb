@@ -36,7 +36,8 @@ module Gitlab
               'redactedFieldCount' => @collected.fetch(:redacted_field_count)
             },
             'mutations' => mutations,
-            'fields' => fields
+            'fields' => fields,
+            'publicFields' => @collected.fetch(:public_fields)
           }
         end
 
