@@ -1,0 +1,7 @@
+{
+  "description": "Max wall-clock seconds for the dual-bundler frontend build stage (parallel max of webpack4 and rspack). Tolerance is +0% (WO-022).",
+  "maxWallClockSeconds": 120,
+  "measurement": "parallel_max",
+  "recordedFor": "WO-022",
+  "notes": "Demo repo builds are small; baseline leaves headroom for CI runners while still failing closed on regressions."
+}

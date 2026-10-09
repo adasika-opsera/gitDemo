@@ -2,7 +2,7 @@
   "name": "gitdemo-frontend",
   "version": "1.0.0",
   "private": true,
-  "description": "Demo frontend build baseline, dual-bundler parity, size budget gate, runtime smoke suite, and architecture ratchets (WO-001–WO-006)",
+  "description": "Demo frontend build baseline, dual-bundler parity/coexistence CI, size budget gate, runtime smoke suite, architecture ratchets, and Rspack 2.1.x stable upgrade (WO-001–WO-006, WO-021–WO-022)",
   "engines": {
     "node": ">=22.0.0"
   },
@@ -22,11 +22,14 @@
     "test:parity": "jest tests/frontend/compareBundles.test.js",
     "test:size-budget": "jest tests/frontend/checkSizeBudget.test.js",
     "test:smoke": "jest tests/frontend/smokeEntryPoints.test.js",
-    "test:architecture": "jest tests/architecture/layerRatchet.test.js"
+    "test:architecture": "jest tests/architecture/layerRatchet.test.js",
+    "emit-build-artifacts": "node scripts/frontend/emit_build_artifacts.mjs",
+    "verify-frontend-stage-duration": "node scripts/frontend/verify_frontend_stage_duration.mjs",
+    "test:emit-artifacts": "jest tests/frontend/emitBuildArtifacts.test.js"
   },
   "devDependencies": {
-    "@rspack/cli": "^1.7.12",
-    "@rspack/core": "^1.7.12",
+    "@rspack/cli": "2.1.10",
+    "@rspack/core": "2.1.10",
     "ajv": "^8.17.1",
     "ajv-formats": "^3.0.1",
     "dependency-cruiser": "^16.10.4",

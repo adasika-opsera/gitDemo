@@ -1,3 +1,5 @@
+// WO-022: webpack production build remains the coexistence rollback path; CI dual-build
+// runs this config with ENABLE_RSPACK unset and WEBPACK_VENDOR_DLL unset.
 'use strict';
 
 const path = require('path');
