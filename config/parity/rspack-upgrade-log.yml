@@ -1,0 +1,35 @@
+# Append-only log of Rspack version upgrades verified through the parity harness.
+# Required for WO-021: upgrade results must be recorded for the Phase 3 go/no-go gate.
+entries:
+  - work_order: WO-021
+    date: "2026-10-09"
+    from:
+      "@rspack/core": "1.7.12"
+      "@rspack/cli": "1.7.12"
+    to:
+      "@rspack/core": "2.1.10"
+      "@rspack/cli": "2.1.10"
+      "@rspack/binding": "2.1.10"
+    rsdoctor:
+      included: false
+      reason: "Latest @rsdoctor/rspack-plugin was 2.0.0-alpha; gated out of the build rather than pinning core to an RC (BR-03)."
+    verification:
+      rspack_production_build: pass
+      webpack4_production_build: pass
+      smoke_suite:
+        webpack4: { passed: 3, failed: 0, skipped: 1 }
+        rspack: { passed: 3, failed: 0, skipped: 1 }
+        skipped_entry: { name: dev_tools, reason: no_emitted_assets }
+        runtime_smoke_divergence: 0
+      parity_harness:
+        pass: false
+        blocking_defects: 6
+        kinds: [asset_size_changed, byte_digest_mismatch]
+        note: "Expected dual-bundler size/digest deltas; not allowlisted. Recorded for Phase 3 tracking."
+      unit_tests: { suites: 5, tests: 60, failed: 0 }
+      dependency_scan:
+        rspack_related_advisories: 0
+        report: reports/security/rspack-2.1.10-advisory-summary.json
+    notes:
+      - "No rc/beta/alpha packages remain in the resolved @rspack/* tree."
+      - "ENABLE_RSPACK remains opt-in; config/webpack.config.js untouched."

@@ -25,6 +25,7 @@ build-webpack:
     - if: $CI_PIPELINE_SOURCE
 
 build-rspack:
+  # WO-021: uses @rspack/cli + @rspack/core from package.json (stable 2.1.x, no RC).
   extends: .frontend-test-base
   stage: test
   script:
