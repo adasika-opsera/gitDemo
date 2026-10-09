@@ -1,44 +1,107 @@
 # Frontend CI jobs for build baseline capture, validation, and dual-bundler parity.
+# WO-022: dual bundler builds run in parallel behind DUAL_BUNDLER_COEXISTENCE.
+
+variables:
+  # Single coexistence flag — set to "false" to remove the second (Rspack) build in one change.
+  DUAL_BUNDLER_COEXISTENCE: "true"
 
 .frontend-test-base:
   image: node:22-bookworm
   before_script:
-    - yarn install --frozen-lockfile || yarn install
+    - yarn install --frozen-lockfile || npm ci || npm install
   cache:
-    key: frontend-yarn
+    key: frontend-yarn-$CI_COMMIT_REF_SLUG
     paths:
       - node_modules/
+    policy: pull-push
+
+.frontend-changes-rule: &frontend_changes
+  changes:
+    - config/**/*
+    - scripts/frontend/**/*
+    - scripts/utils.sh
+    - src/**/*
+    - package.json
+    - package-lock.json
+    - yarn.lock
+    - .gitlab/ci/frontend.gitlab-ci.yml
+    - fixtures/frontend/**/*
 
 build-webpack:
   extends: .frontend-test-base
   stage: test
+  # Vendor DLL builds stay scoped to webpack only (WEBPACK_VENDOR_DLL unset here).
+  variables:
+    ENABLE_RSPACK: ""
+    WEBPACK_VENDOR_DLL: ""
   script:
     - source scripts/utils.sh
     - log_info "Building production assets with webpack 4"
+    - START=$(start_timer)
+    - STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
     - NODE_ENV=production node node_modules/webpack/bin/webpack.js --config config/webpack.config.js
+    - ELAPSED=$(elapsed_seconds "$START")
+    - FINISHED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    - |
+      node scripts/frontend/emit_build_artifacts.mjs \
+        --bundler webpack4 \
+        --manifest dist/webpack/asset-manifest.json \
+        --output dist/webpack \
+        --wall-clock-seconds "$ELAPSED" \
+        --started-at "$STARTED_AT" \
+        --finished-at "$FINISHED_AT" \
+        --git-sha "${CI_COMMIT_SHA}"
   artifacts:
     name: webpack-dist
     paths:
       - dist/webpack/
+      - reports/parity/builds/webpack4/
     expire_in: 31d
   rules:
-    - if: $CI_PIPELINE_SOURCE
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      <<: *frontend_changes
+    - if: $CI_PIPELINE_SOURCE == "push"
+      <<: *frontend_changes
 
 build-rspack:
   # WO-021: uses @rspack/cli + @rspack/core from package.json (stable 2.1.x, no RC).
+  # WO-022: gated by DUAL_BUNDLER_COEXISTENCE so dual-build can be removed in one change.
   extends: .frontend-test-base
   stage: test
+  variables:
+    ENABLE_RSPACK: "true"
   script:
     - source scripts/utils.sh
     - log_info "Building production assets with Rspack"
+    - START=$(start_timer)
+    - STARTED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
     - NODE_ENV=production node node_modules/@rspack/cli/bin/rspack.js build --config config/rspack.config.mjs
+    - ELAPSED=$(elapsed_seconds "$START")
+    - FINISHED_AT=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+    - |
+      node scripts/frontend/emit_build_artifacts.mjs \
+        --bundler rspack \
+        --manifest dist/rspack/asset-manifest.json \
+        --output dist/rspack \
+        --wall-clock-seconds "$ELAPSED" \
+        --started-at "$STARTED_AT" \
+        --finished-at "$FINISHED_AT" \
+        --git-sha "${CI_COMMIT_SHA}"
   artifacts:
     name: rspack-dist
     paths:
       - dist/rspack/
+      - reports/parity/builds/rspack/
     expire_in: 31d
   rules:
-    - if: $CI_PIPELINE_SOURCE
+    - if: $DUAL_BUNDLER_COEXISTENCE != "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      <<: *frontend_changes
+    - if: $CI_PIPELINE_SOURCE == "push"
+      <<: *frontend_changes
 
 bundle-parity:
   extends: .frontend-test-base
@@ -65,9 +128,45 @@ bundle-parity:
       - reports/parity/diff-report.md
       - reports/parity/size-table.json
       - reports/parity/parity-defects.json
+      - reports/parity/builds/
     expire_in: 31d
   rules:
-    - if: $CI_PIPELINE_SOURCE
+    - if: $DUAL_BUNDLER_COEXISTENCE != "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      <<: *frontend_changes
+    - if: $CI_PIPELINE_SOURCE == "push"
+      <<: *frontend_changes
+
+frontend-stage-duration:
+  extends: .frontend-test-base
+  stage: test
+  needs:
+    - job: build-webpack
+      artifacts: true
+    - job: build-rspack
+      artifacts: true
+  script:
+    - source scripts/utils.sh
+    - log_info "Verifying dual-build frontend stage duration does not exceed baseline"
+    - |
+      node scripts/frontend/verify_frontend_stage_duration.mjs \
+        --reports-root reports/parity \
+        --baseline config/parity/frontend-stage-duration-baseline.json
+  artifacts:
+    name: frontend-stage-duration-report
+    paths:
+      - reports/parity/builds/frontend-stage-duration-report.json
+    expire_in: 31d
+  rules:
+    - if: $DUAL_BUNDLER_COEXISTENCE != "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      <<: *frontend_changes
+    - if: $CI_PIPELINE_SOURCE == "push"
+      <<: *frontend_changes
 
 build-baseline:
   extends: .frontend-test-base
@@ -185,7 +284,32 @@ runtime-smoke:
       - reports/parity/parity-defects.json
     expire_in: 31d
   rules:
-    - if: $CI_PIPELINE_SOURCE
+    - if: $DUAL_BUNDLER_COEXISTENCE != "true"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+      changes:
+        - config/**/*
+        - scripts/frontend/**/*
+        - scripts/utils.sh
+        - src/**/*
+        - package.json
+        - package-lock.json
+        - yarn.lock
+        - .gitlab/ci/frontend.gitlab-ci.yml
+        - fixtures/frontend/**/*
+    - if: $CI_PIPELINE_SOURCE == "push"
+      changes:
+        - config/**/*
+        - scripts/frontend/**/*
+        - scripts/utils.sh
+        - src/**/*
+        - package.json
+        - package-lock.json
+        - yarn.lock
+        - .gitlab/ci/frontend.gitlab-ci.yml
+        - fixtures/frontend/**/*
+
 
 runtime-smoke-fixtures:
   extends: .frontend-test-base

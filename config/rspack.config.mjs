@@ -23,6 +23,8 @@ const isProduction = process.env.NODE_ENV === 'production';
  *
  * ENABLE_RSPACK remains opt-in — this story does not flip the default build
  * (see WO-026). webpack 4 config is untouched so the rollback path stays intact.
+ * WO-022: CI dual-build runs this config in parallel with webpack behind
+ * DUAL_BUNDLER_COEXISTENCE (single flag to retire the second build).
  *
  * @type {import('@rspack/core').Configuration}
  */
